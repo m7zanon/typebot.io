@@ -1,0 +1,63 @@
+version: '3.3'
+services:
+  caddy-gen:
+    image: 'wemakeservices/caddy-gen:latest'
+    restart: always
+    volumes:
+      - /var/run/docker.sock:/tmp/docker.sock:ro
+      - caddy-certificates:/data/caddy
+    ports:
+      - '80:80'
+      - '443:443'
+    depends_on:
+      - typebot-builder
+      - typebot-viewer
+  typebot-db:
+    image: postgres:13
+    restart: always
+    volumes:
+      - db_data:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_DB=typebot
+      - POSTGRES_PASSWORD=typebot
+  typebot-builder:
+    labels:
+      virtual.host: 'config.rumoacura.online' # change to your domain
+      virtual.port: '3000'
+      virtual.tls-email: 'admin@example.com' # change to your email
+    image: baptistearno/typebot-builder:latest  
+    restart: always
+    depends_on:
+      - typebot-db
+    ports:
+      - '8080:3000'
+    extra_hosts:
+      - 'host.docker.internal:host-gateway'
+    # See https://docs.typebot.io/self-hosting/configuration/builder for more configuration options
+    environment:
+      - DATABASE_URL=postgresql://postgres:typebot@typebot-db:5432/typebot
+      - NEXTAUTH_URL=https://config.rumoacura.online
+      - NEXT_PUBLIC_VIEWER_URL=https://consulta.rumoacura.online
+      - ENCRYPTION_SECRET=WJY9cwIWGZyS3FYu6EB3EDw4ILYjv6Ud
+      - ADMIN_EMAIL=matheuszanon@icloud.com
+      - NEXTAUTH_GITHUB_ID=c76c8cffe2d1ff8ad564
+      - NEXTAUTH_GITHUB_SECRET=287370dc311c10e3acfd89e8761bf4fb3ff6ccaf
+  typebot-viewer:
+    labels:
+      virtual.host: 'consulta.rumoacura.online' # change to your domain
+      virtual.port: '3000'
+      virtual.tls-email: 'admin@example.com' # change to your email
+    image: baptistearno/typebot-viewer:latest
+    restart: always
+    ports:
+      - '8081:3000'
+    # See https://docs.typebot.io/self-hosting/configuration/viewer for more configuration options
+    environment:
+      - DATABASE_URL=postgresql://postgres:typebot@typebot-db:5432/typebot
+      - NEXT_PUBLIC_VIEWER_URL=https://consulta.rumoacura.online
+      - ENCRYPTION_SECRET=WJY9cwIWGZyS3FYu6EB3EDw4ILYjv6Ud
+      - NEXTAUTH_URL=https://config.rumoacura.online
+volumes:
+  db_data:
+  caddy-certificates:
+    driver: local  

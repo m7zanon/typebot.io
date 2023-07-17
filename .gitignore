@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # Compiled class file
 *.class
 
@@ -22,3 +23,42 @@
 # virtual machine crash logs, see http://www.java.com/en/download/help/error_hotspot.xml
 hs_err_pid*
 replay_pid*
+=======
+node_modules
+.next
+.env
+.env.local
+workspace.code-workspace
+.DS_Store
+.turbo
+authenticatedState.json
+playwright-report
+dist
+test-results
+**/src/test/results
+**/src/test/reporters
+test/report
+**/api/scripts
+.sentryclirc
+.docusaurus
+.cache-loader
+build
+firebaseServiceAccount.json
+
+.env.production
+.env.staging
+
+# Wordpress
+.svn
+tags
+
+dump.sql
+dump.tar
+
+__env.js
+
+typebotsToFix.json
+**/scripts/logs
+
+snapshots
+>>>>>>> 5394b39 (enviando)
